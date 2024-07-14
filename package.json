@@ -5,7 +5,7 @@
     "nodejs-aws-shop-be": "bin/nodejs-aws-shop-be.js"
   },
   "scripts": {
-    "build": "build:layer && tsc",
+    "build": "npm run build:layer && tsc",
     "build:layer": "cd my-layer && zip -r ./my-layer.zip ./nodejs",
     "watch": "tsc -w",
     "test": "jest",
@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@types/base-64": "^1.0.2",
     "@types/jest": "^29.5.12",
     "@types/node": "20.14.2",
     "@types/uuid": "^10.0.0",
@@ -27,8 +28,10 @@
     "aws-cdk": "2.147.0",
     "aws-cdk-lib": "2.147.0",
     "aws-sdk": "^2.1646.0",
+    "base-64": "^1.0.0",
     "constructs": "^10.0.0",
     "csv-parser": "^3.0.0",
+    "dotenv": "^16.4.5",
     "node-fetch": "^3.3.2",
     "node-fetch-commonjs": "^3.3.2",
     "source-map-support": "^0.5.21",

@@ -94,12 +94,71 @@ export class ImportServiceStack extends cdk.Stack {
       restApiName: 'Import Service',
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,  // Allow all origins
-        allowMethods: apigateway.Cors.ALL_METHODS   // Allow all methods (GET, POST, etc.)
+        allowMethods: apigateway.Cors.ALL_METHODS,   // Allow all methods (GET, POST, etc.)
+        allowCredentials: true,
+
+        statusCode: 200
       }
     });
 
     const importResource = api.root.addResource('import');
 
-    importResource.addMethod('GET', new apigateway.LambdaIntegration(importProductsFile));
+
+
+    const basicAuthorizer = lambda.Function.fromFunctionArn(
+      this,
+      'basic-authorizer',
+      cdk.Fn.importValue('basic-authorizer-arn')
+    );
+
+    // Create the Lambda authorizer
+    const authorizer = new apigateway.RequestAuthorizer(this, 'basicAuthorizerRequestAuthorizer', {
+      handler: basicAuthorizer,
+      identitySources: [apigateway.IdentitySource.header('Authorization')]
+    });
+
+    importResource.addMethod('GET', new apigateway.LambdaIntegration(importProductsFile), {
+      authorizer: authorizer,
+      authorizationType: apigateway.AuthorizationType.CUSTOM,
+    });
+
+    
+    // addCorsOptions(importResource);
+    
+  }
+}
+
+function addCorsOptions(apiResource: apigateway.IResource) {
+  try {
+    apiResource.addMethod('OPTIONS', new apigateway.MockIntegration({
+      integrationResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,Authorization'",
+          'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'"
+        }
+      }],
+      passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
+      requestTemplates: {
+        'application/json': '{"statusCode": 200}'
+      }
+    }), {
+      methodResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': true,
+          'method.response.header.Access-Control-Allow-Methods': true,
+          'method.response.header.Access-Control-Allow-Origin': true
+        }
+      }]
+    });
+  } catch (error) {
+    // @ts-expect-error
+    if (error.message.includes('already a Construct with name \'OPTIONS\'')) {
+      // OPTIONS method already exists, do nothing
+    } else {
+      throw error; // rethrow other errors
+    }
   }
 }

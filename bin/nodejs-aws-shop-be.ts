@@ -3,6 +3,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { NodejsAwsShopBeStack } from '../lib/nodejs-aws-shop-be-stack';
 import { ImportServiceStack } from '../lib/import-service-stack';
+import { AuthorizationServiceStack } from '../lib/authorization-service-stack';
 
 const app = new cdk.App();
 new NodejsAwsShopBeStack(app, 'NodejsAwsShopBeStack', {
@@ -22,5 +23,9 @@ new NodejsAwsShopBeStack(app, 'NodejsAwsShopBeStack', {
 });
 
 new ImportServiceStack(app, 'ImportServiceStack', {
+  
+})
+
+new AuthorizationServiceStack(app, 'AuthorizationServiceStack', {
   
 })
