@@ -1,5 +1,4 @@
 import { S3 } from "aws-sdk"
-import fetch from "node-fetch"
 
 const s3 = new S3()
 
@@ -14,19 +13,18 @@ export const importProductsFile = async (event) => {
         };
     }
 
-    const expiresIn = 3600; // URL expiration time in seconds
-
     const params = {
-        Bucket: 'arn:aws:s3:global:258886028601:accesspoint/uploaded',
+        Bucket: 'importservicestack-importservice88b434cc-wosjisr5udex',
         Key: "uploaded/" + fileName,
-        Expires: expiresIn,
+        Expires: 3600,
+        ContentType: 'text/csv'
     };
 
     const headers = {
-        'Access-Control-Allow-Origin': '*',  // Replace with your allowed origin(s)
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
         'Access-Control-Allow-Methods': 'OPTIONS,GET,POST,PUT,DELETE',
-        'Access-Control-Allow-Credentials': true,  // Set to true if you are allowing credentials
+        'Access-Control-Allow-Credentials': true,
     };
 
     try {
