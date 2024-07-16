@@ -9,7 +9,6 @@ const STOCK_PRIMARY_KEY = process.env.STOCK_PRIMARY_KEY || '';
 
 const db = DynamoDBDocument.from(new DynamoDB());
 
-// async is nessasary
 export const getProductsById = async (event) => {
     try {
         const id = event.pathParameters.productId
